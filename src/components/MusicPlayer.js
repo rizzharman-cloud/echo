@@ -241,11 +241,21 @@ export default function MusicPlayer({
             {/* Full Page Mobile Player */}
             {showFullPagePlayer && (
                 <motion.div 
-                    className="md:hidden fixed inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-black z-[100] flex flex-col"
+                    className="md:hidden fixed inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-black z-[9999] flex flex-col w-screen h-screen"
                     initial={{ y: "100%" }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: "100%" }}
                     transition={{ duration: 0.4, ease: "easeInOut" }}
+                    style={{ 
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        zIndex: 9999
+                    }}
                 >
                     {/* Background Effects */}
                     <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/5 to-purple-500/10" />
@@ -263,41 +273,41 @@ export default function MusicPlayer({
                     <div className="relative z-10 flex justify-end p-4">
                         <button
                             onClick={() => setShowFullPagePlayer(false)}
-                            className="bg-slate-800/60 backdrop-blur-sm rounded-full p-3 text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all duration-200"
+                            className="bg-slate-800/80 backdrop-blur-sm rounded-full p-4 text-slate-300 hover:text-white hover:bg-slate-700/80 transition-all duration-200 shadow-lg"
                         >
-                            <MdClose size={24} />
+                            <MdClose size={28} />
                         </button>
                     </div>
 
                     {/* Song Image - Center */}
-                    <div className="relative z-10 flex-1 flex items-center justify-center px-8">
+                    <div className="relative z-10 flex-1 flex items-center justify-center px-8 py-4">
                         <div className="relative">
                             <img
                                 src={imageUrl}
                                 alt={title}
-                                className="w-72 h-72 object-cover rounded-3xl shadow-2xl shadow-cyan-500/20 border-2 border-cyan-500/30"
+                                className="w-80 h-80 object-cover rounded-3xl shadow-2xl shadow-cyan-500/30 border-2 border-cyan-500/40"
                             />
                             {/* Glow effect behind image */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-3xl blur-xl -z-10 scale-110" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/30 to-blue-500/30 rounded-3xl blur-2xl -z-10 scale-125" />
                         </div>
                     </div>
 
                     {/* Song Info - Below Image */}
-                    <div className="relative z-10 px-8 pb-4">
+                    <div className="relative z-10 px-8 pb-6">
                         <div className="text-center mb-8">
-                            <h1 className="text-2xl font-bold text-white mb-2 leading-tight">
+                            <h1 className="text-3xl font-bold text-white mb-3 leading-tight">
                                 {title}
                             </h1>
-                            <p className="text-lg text-slate-300">
+                            <p className="text-xl text-slate-300">
                                 {artist}
                             </p>
                         </div>
 
                         {/* Seek Bar */}
-                        <div className="mb-8">
+                        <div className="mb-6">
                             <input
                                 type="range"
-                                className="w-full h-2 bg-slate-700 rounded-full cursor-pointer accent-cyan-500"
+                                className="w-full h-3 bg-slate-700 rounded-full cursor-pointer accent-cyan-500"
                                 min="0"
                                 max={duration}
                                 step="1"
@@ -313,17 +323,17 @@ export default function MusicPlayer({
                     </div>
 
                     {/* Controls - Bottom */}
-                    <div className="relative z-10 bg-slate-900/40 backdrop-blur-xl border-t border-cyan-500/30 p-6">
-                        <div className="flex justify-center items-center space-x-8 mb-4">
+                    <div className="relative z-10 bg-slate-900/60 backdrop-blur-xl border-t border-cyan-500/40 p-8 pb-12">
+                        <div className="flex justify-center items-center space-x-10">
                             {/* Like Button */}
                             <button
                                 className="text-pink-400 hover:text-pink-300 transition-all duration-200 hover:scale-110 p-3 rounded-full hover:bg-pink-500/10"
                                 onClick={() => onLikeToggle?.(currentSong, isCurrentTrackLiked)}
                             >
                                 {isCurrentTrackLiked ? (
-                                    <MdFavorite size={28} />
+                                    <MdFavorite size={32} />
                                 ) : (
-                                    <MdFavoriteBorder size={28} />
+                                    <MdFavoriteBorder size={32} />
                                 )}
                             </button>
 
@@ -334,19 +344,19 @@ export default function MusicPlayer({
                                     onClick={onPrevLikedSong}
                                     disabled={!hasSong}
                                 >
-                                    <MdSkipPrevious size={32} />
+                                    <MdSkipPrevious size={36} />
                                 </button>
                             )}
 
                             {/* Play/Pause Button */}
                             <button
-                                className={`bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 hover:scale-105 rounded-full p-4 shadow-2xl shadow-cyan-500/30 ${
+                                className={`bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 hover:scale-105 rounded-full p-5 shadow-2xl shadow-cyan-500/40 ${
                                     !hasSong ? 'opacity-50 cursor-not-allowed' : ''
                                 }`}
                                 onClick={handlePlayPause}
                                 disabled={!hasSong}
                             >
-                                {isPlaying ? <MdPause size={36} /> : <MdPlayArrow size={36} />}
+                                {isPlaying ? <MdPause size={40} /> : <MdPlayArrow size={40} />}
                             </button>
 
                             {/* Next Button */}
@@ -356,7 +366,7 @@ export default function MusicPlayer({
                                     onClick={onNextLikedSong}
                                     disabled={!hasSong}
                                 >
-                                    <MdSkipNext size={32} />
+                                    <MdSkipNext size={36} />
                                 </button>
                             )}
 
@@ -365,7 +375,7 @@ export default function MusicPlayer({
                                 className="text-red-400 hover:text-red-300 transition-all duration-200 hover:scale-110 p-3 rounded-full hover:bg-red-500/10"
                                 onClick={() => setShowVideo(!showVideo)}
                             >
-                                <FaYoutube size={28} />
+                                <FaYoutube size={32} />
                             </button>
                         </div>
                     </div>
