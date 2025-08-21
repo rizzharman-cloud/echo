@@ -241,7 +241,7 @@ export default function MusicPlayer({
             {/* Full Page Mobile Player */}
             {showFullPagePlayer && (
                 <motion.div 
-                    className="md:hidden fixed inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-black z-[9999] flex flex-col w-screen h-screen"
+                    className="md:hidden fixed bg-gradient-to-br from-slate-950 via-slate-900 to-black flex flex-col"
                     initial={{ y: "100%" }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: "100%" }}
@@ -254,7 +254,10 @@ export default function MusicPlayer({
                         bottom: 0,
                         width: '100vw',
                         height: '100vh',
-                        zIndex: 9999
+                        minHeight: '100vh',
+                        maxHeight: '100vh',
+                        zIndex: 99999,
+                        overflow: 'hidden'
                     }}
                 >
                     {/* Background Effects */}
