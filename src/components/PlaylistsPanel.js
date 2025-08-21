@@ -195,23 +195,30 @@ export default function PlaylistsPanel({ playlists, setPlaylists, onSelectSong, 
                                 </div>
                                 
                                 {/* Action buttons */}
-                                <div className="absolute top-2 right-2 flex space-x-1">
+                                <div className="absolute bottom-11 sm:bottom-12 right-1 sm:right-2 flex space-x-1">
+                                    {/* Play Button */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleSongClick(song, index);
+                                        }}
+                                        className="text-blue-400 bg-slate-900/60 backdrop-blur-sm rounded-full p-1 sm:p-1.5 hover:bg-slate-800/80 hover:text-blue-300 transition-all duration-200 hover:scale-110 border border-slate-600/50"
+                                        aria-label="Play Song"
+                                    >
+                                        <MdPlayArrow size={14} />
+                                    </button>
+                                    
                                     {/* Delete Song Button */}
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleDeleteSongFromPlaylist(song, viewingPlaylist.id);
                                         }}
-                                        className="bg-red-500/80 hover:bg-red-600/90 backdrop-blur-sm rounded-full p-1.5 border border-red-400/50 transition-all duration-200 hover:scale-110"
+                                        className="text-red-400 bg-slate-900/60 backdrop-blur-sm rounded-full p-1 sm:p-1.5 hover:bg-slate-800/80 hover:text-red-300 transition-all duration-200 hover:scale-110 border border-slate-600/50"
                                         aria-label="Remove song from playlist"
                                     >
-                                        <MdDelete size={14} className="text-white" />
+                                        <MdDelete size={12} />
                                     </button>
-                                    
-                                    {/* Play Button */}
-                                    <div className="bg-slate-900/60 backdrop-blur-sm rounded-full p-1.5 border border-slate-600/50">
-                                        <MdPlayArrow size={16} className="text-blue-400" />
-                                    </div>
                                 </div>
                             </motion.div>
                         ))}
