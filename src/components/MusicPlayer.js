@@ -113,7 +113,15 @@ export default function MusicPlayer({
             {/* (1) Left Section: Thumbnail, Title/Artist, and Like Button */}
             <div className="flex items-center w-full md:w-[30%] min-w-0 relative z-10">
                 {/* Image + Text in one flex row (with possible grow) */}
-                <div className="flex items-center min-w-0 flex-grow space-x-2 sm:space-x-3">
+                <div 
+                    className="flex items-center min-w-0 flex-grow space-x-2 sm:space-x-3 cursor-pointer md:cursor-default"
+                    onClick={() => {
+                        // Only toggle on mobile (md:hidden)
+                        if (window.innerWidth < 768) {
+                            setShowMobileControls(!showMobileControls);
+                        }
+                    }}
+                >
                     {/* Thumbnail */}
                     <img
                         src={imageUrl}
@@ -139,6 +147,10 @@ export default function MusicPlayer({
                         >
                             {artist}
                         </motion.div>
+                        {/* Mobile tap indicator */}
+                        <div className="md:hidden text-xs text-cyan-400/60 truncate">
+                            Tap to {showMobileControls ? 'hide' : 'show'} controls
+                        </div>
                     </div>
                 </div>
 
@@ -228,7 +240,13 @@ export default function MusicPlayer({
 
             {/* Mobile Controls */}
             {showMobileControls && (
-                <div className="md:hidden absolute -top-20 left-0 right-0 bg-gradient-to-r from-slate-950/95 via-slate-900/95 to-slate-950/95 backdrop-blur-2xl border-t border-cyan-500/30 p-3 rounded-t-2xl shadow-2xl">
+                <motion.div 
+                    className="md:hidden absolute -top-20 left-0 right-0 bg-gradient-to-r from-slate-950/95 via-slate-900/95 to-slate-950/95 backdrop-blur-2xl border-t border-cyan-500/30 p-3 rounded-t-2xl shadow-2xl z-50"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 20, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
                     <div className="flex justify-center items-center space-x-6 mb-3">
                         {isLikedPanelActive && (
                             <button
@@ -276,11 +294,11 @@ export default function MusicPlayer({
                         />
                         <span className="text-xs text-slate-400 flex-shrink-0 font-mono">{formatTime(duration)}</span>
                     </div>
-                </div>
+                </motion.div>
             )}
 
             {/* Mobile Expand/Collapse Button */}
-            <div className="md:hidden absolute -top-12 left-1/2 transform -translate-x-1/2 z-10">
+            <div className="md:hidden absolute -top-12 left-1/2 transform -translate-x-1/2 z-40">
                 <button
                     className="bg-gradient-to-r from-cyan-500/80 to-blue-500/80 hover:from-cyan-600/90 hover:to-blue-600/90 transition-all duration-200 hover:scale-110 rounded-full p-2 shadow-lg shadow-cyan-500/25 backdrop-blur-sm border border-cyan-400/30"
                     onClick={() => setShowMobileControls(!showMobileControls)}
