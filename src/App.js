@@ -399,8 +399,8 @@ export default function App() {
             </div>
 
             {/* Mobile Music Player */}
-            <div className="md:hidden fixed bottom-20 left-0 right-0 z-50 flex flex-col">
-                <div className="h-16 sm:h-20">
+            <div className="md:hidden fixed bottom-20 left-0 right-0 z-40 flex flex-col">
+                <div className="h-20">
                     <MusicPlayer
                         song={currentSong}
                         likedSongs={likedSongs}

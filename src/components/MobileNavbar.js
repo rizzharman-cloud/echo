@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdHome, MdPerson, MdFavorite, MdLogin, MdPlaylistPlay, MdSearch } from 'react-icons/md';
+import { MdHome, MdFavorite, MdLogin, MdPlaylistPlay } from 'react-icons/md';
 import { CiLogout } from 'react-icons/ci';
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
@@ -90,27 +90,6 @@ export default function MobileNavbar({ activePanel,
                         )}
                     </motion.button>
                 )}
-
-                {/* Profile Button */}
-                <motion.button
-                    className={`relative p-3 rounded-2xl transition-all duration-300 ${
-                        activePanel === 'profile' 
-                            ? 'text-emerald-400 bg-gradient-to-br from-emerald-500/20 to-green-500/20 shadow-lg shadow-emerald-500/25' 
-                            : 'text-slate-300 hover:text-emerald-400 hover:bg-slate-800/50'
-                    }`}
-                    onClick={() => togglePanel('playlists')}
-                    aria-label="Profile"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <MdPerson size={24} />
-                    {activePanel === 'profile' && (
-                        <motion.div 
-                            className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-emerald-400 rounded-full"
-                            layoutId="activeIndicator"
-                        />
-                    )}
-                </motion.button>
 
                 {/* Sign-In / Sign-Out Button */}
                 <motion.button

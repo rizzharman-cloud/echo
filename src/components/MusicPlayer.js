@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import ReactPlayer from 'react-player/youtube'
 import { FaYoutube } from "react-icons/fa";
 import { LuPanelRightClose } from "react-icons/lu";
+import { MdExpandMore, MdExpandLess } from 'react-icons/md';
 import {
     MdFavoriteBorder,
     MdFavorite,
@@ -25,6 +26,7 @@ export default function MusicPlayer({
     const [isPlaying, setIsPlaying] = useState(false)
     const [autoPlayNextSong, setAutoPlayNextSong] = useState(false)
     const [showVideo, setShowVideo] = useState(false)
+    const [showMobileControls, setShowMobileControls] = useState(false)
 
     const audioPlayerRef = useRef(null)
     const reelsPlayerRef = useRef(null)
@@ -225,54 +227,66 @@ export default function MusicPlayer({
             )}
 
             {/* Mobile Controls */}
-            <div className="md:hidden absolute -top-16 left-0 right-0 bg-gradient-to-r from-slate-950/90 via-slate-900/90 to-slate-950/90 backdrop-blur-2xl border-t border-cyan-500/30 p-2 sm:p-3">
-                <div className="flex justify-center items-center space-x-4 sm:space-x-6 mb-2 sm:mb-3">
-                    {isLikedPanelActive && (
+            {showMobileControls && (
+                <div className="md:hidden absolute -top-20 left-0 right-0 bg-gradient-to-r from-slate-950/95 via-slate-900/95 to-slate-950/95 backdrop-blur-2xl border-t border-cyan-500/30 p-3 rounded-t-2xl shadow-2xl">
+                    <div className="flex justify-center items-center space-x-6 mb-3">
+                        {isLikedPanelActive && (
+                            <button
+                                className="hover:text-cyan-400 transition-all duration-200 hover:scale-110 touch-manipulation p-2 rounded-xl hover:bg-cyan-500/10"
+                                onClick={onPrevLikedSong}
+                                disabled={!hasSong}
+                            >
+                                <MdSkipPrevious size={24} />
+                            </button>
+                        )}
+
                         <button
-                            className="hover:text-cyan-400 transition-all duration-200 hover:scale-110 touch-manipulation p-2 rounded-xl hover:bg-cyan-500/10"
-                            onClick={onPrevLikedSong}
+                            className={`bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 hover:scale-105 rounded-2xl p-3 shadow-lg shadow-cyan-500/25 touch-manipulation ${
+                                !hasSong ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
+                            onClick={handlePlayPause}
                             disabled={!hasSong}
                         >
-                            <MdSkipPrevious size={20} className="sm:w-6 sm:h-6" />
+                            {isPlaying ? <MdPause size={24} /> : <MdPlayArrow size={24} />}
                         </button>
-                    )}
 
-                    <button
-                        className={`bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 hover:scale-105 rounded-2xl p-2 shadow-lg shadow-cyan-500/25 touch-manipulation ${
-                            !hasSong ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
-                        onClick={handlePlayPause}
-                        disabled={!hasSong}
-                    >
-                        {isPlaying ? <MdPause size={20} className="sm:w-6 sm:h-6" /> : <MdPlayArrow size={20} className="sm:w-6 sm:h-6" />}
-                    </button>
+                        {isLikedPanelActive && (
+                            <button
+                                className="hover:text-cyan-400 transition-all duration-200 hover:scale-110 touch-manipulation p-2 rounded-xl hover:bg-cyan-500/10"
+                                onClick={onNextLikedSong}
+                                disabled={!hasSong}
+                            >
+                                <MdSkipNext size={24} />
+                            </button>
+                        )}
+                    </div>
 
-                    {isLikedPanelActive && (
-                        <button
-                            className="hover:text-cyan-400 transition-all duration-200 hover:scale-110 touch-manipulation p-2 rounded-xl hover:bg-cyan-500/10"
-                            onClick={onNextLikedSong}
+                    {/* Mobile Seek bar */}
+                    <div className="flex items-center space-x-3">
+                        <span className="text-xs text-slate-400 flex-shrink-0 font-mono">{formatTime(playedSeconds)}</span>
+                        <input
+                            type="range"
+                            className="flex-1 h-2 bg-slate-700 rounded-full cursor-pointer accent-cyan-500"
+                            min="0"
+                            max={duration}
+                            step="1"
+                            value={playedSeconds}
+                            onChange={handleSeek}
                             disabled={!hasSong}
-                        >
-                            <MdSkipNext size={20} className="sm:w-6 sm:h-6" />
-                        </button>
-                    )}
+                        />
+                        <span className="text-xs text-slate-400 flex-shrink-0 font-mono">{formatTime(duration)}</span>
+                    </div>
                 </div>
+            )}
 
-                {/* Mobile Seek bar */}
-                <div className="flex items-center space-x-2 sm:space-x-3">
-                    <span className="text-xs text-slate-400 flex-shrink-0">{formatTime(playedSeconds)}</span>
-                    <input
-                        type="range"
-                        className="flex-1 h-1.5 sm:h-2 bg-slate-700 rounded-full cursor-pointer accent-cyan-500"
-                        min="0"
-                        max={duration}
-                        step="1"
-                        value={playedSeconds}
-                        onChange={handleSeek}
-                        disabled={!hasSong}
-                    />
-                    <span className="text-xs text-slate-400 flex-shrink-0">{formatTime(duration)}</span>
-                </div>
+            {/* Mobile Expand/Collapse Button */}
+            <div className="md:hidden absolute -top-12 left-1/2 transform -translate-x-1/2 z-10">
+                <button
+                    className="bg-gradient-to-r from-cyan-500/80 to-blue-500/80 hover:from-cyan-600/90 hover:to-blue-600/90 transition-all duration-200 hover:scale-110 rounded-full p-2 shadow-lg shadow-cyan-500/25 backdrop-blur-sm border border-cyan-400/30"
+                    onClick={() => setShowMobileControls(!showMobileControls)}
+                >
+                    {showMobileControls ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
+                </button>
             </div>
 
             {/*AUDIO-ONLY PLAYER (hidden visually) */}
