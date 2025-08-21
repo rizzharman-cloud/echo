@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import ReactPlayer from 'react-player/youtube'
 import { FaYoutube } from "react-icons/fa";
 import { LuPanelRightClose } from "react-icons/lu";
-import { MdExpandMore, MdExpandLess } from 'react-icons/md';
+import { MdExpandMore, MdExpandLess, MdClose } from 'react-icons/md';
 import {
     MdFavoriteBorder,
     MdFavorite,
@@ -26,7 +26,7 @@ export default function MusicPlayer({
     const [isPlaying, setIsPlaying] = useState(false)
     const [autoPlayNextSong, setAutoPlayNextSong] = useState(false)
     const [showVideo, setShowVideo] = useState(false)
-    const [showMobileControls, setShowMobileControls] = useState(false)
+    const [showFullPagePlayer, setShowFullPagePlayer] = useState(false)
 
     const audioPlayerRef = useRef(null)
     const reelsPlayerRef = useRef(null)
@@ -114,11 +114,11 @@ export default function MusicPlayer({
             <div className="flex items-center w-full md:w-[30%] min-w-0 relative z-10">
                 {/* Image + Text in one flex row (with possible grow) */}
                 <div 
-                    className="flex items-center min-w-0 flex-grow space-x-2 sm:space-x-3 cursor-pointer md:cursor-default"
+                    className="flex items-center min-w-0 flex-grow space-x-2 sm:space-x-3 md:cursor-default"
                     onClick={() => {
                         // Only toggle on mobile (md:hidden)
                         if (window.innerWidth < 768) {
-                            setShowMobileControls(!showMobileControls);
+                            setShowFullPagePlayer(true);
                         }
                     }}
                 >
@@ -149,7 +149,7 @@ export default function MusicPlayer({
                         </motion.div>
                         {/* Mobile tap indicator */}
                         <div className="md:hidden text-xs text-cyan-400/60 truncate">
-                            Tap to {showMobileControls ? 'hide' : 'show'} controls
+                            Tap to open full player
                         </div>
                     </div>
                 </div>
@@ -238,53 +238,187 @@ export default function MusicPlayer({
                 </div>
             )}
 
-            {/* Mobile Controls */}
-            {showMobileControls && (
+            {/* Full Page Mobile Player */}
+            {showFullPagePlayer && (
                 <motion.div 
-                    className="md:hidden absolute -top-20 left-0 right-0 bg-gradient-to-r from-slate-950/95 via-slate-900/95 to-slate-950/95 backdrop-blur-2xl border-t border-cyan-500/30 p-3 rounded-t-2xl shadow-2xl z-50"
+                    className="md:hidden fixed inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-black z-[100] flex flex-col"
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: "100%" }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                >
+                    {/* Background Effects */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/5 to-purple-500/10" />
+                    <div className="absolute inset-0 opacity-20">
+                        <div className="absolute inset-0" style={{
+                            backgroundImage: `
+                                linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+                                linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
+                            `,
+                            backgroundSize: '30px 30px'
+                        }} />
+                    </div>
+
+                    {/* Close Button */}
+                    <div className="relative z-10 flex justify-end p-4">
+                        <button
+                            onClick={() => setShowFullPagePlayer(false)}
+                            className="bg-slate-800/60 backdrop-blur-sm rounded-full p-3 text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all duration-200"
+                        >
+                            <MdClose size={24} />
+                        </button>
+                    </div>
+
+                    {/* Song Image - Center */}
+                    <div className="relative z-10 flex-1 flex items-center justify-center px-8">
+                        <div className="relative">
+                            <img
+                                src={imageUrl}
+                                alt={title}
+                                className="w-72 h-72 object-cover rounded-3xl shadow-2xl shadow-cyan-500/20 border-2 border-cyan-500/30"
+                            />
+                            {/* Glow effect behind image */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-3xl blur-xl -z-10 scale-110" />
+                        </div>
+                    </div>
+
+                    {/* Song Info - Below Image */}
+                    <div className="relative z-10 px-8 pb-4">
+                        <div className="text-center mb-8">
+                            <h1 className="text-2xl font-bold text-white mb-2 leading-tight">
+                                {title}
+                            </h1>
+                            <p className="text-lg text-slate-300">
+                                {artist}
+                            </p>
+                        </div>
+
+                        {/* Seek Bar */}
+                        <div className="mb-8">
+                            <input
+                                type="range"
+                                className="w-full h-2 bg-slate-700 rounded-full cursor-pointer accent-cyan-500"
+                                min="0"
+                                max={duration}
+                                step="1"
+                                value={playedSeconds}
+                                onChange={handleSeek}
+                                disabled={!hasSong}
+                            />
+                            <div className="flex justify-between mt-2 text-sm text-slate-400 font-mono">
+                                <span>{formatTime(playedSeconds)}</span>
+                                <span>{formatTime(duration)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Controls - Bottom */}
+                    <div className="relative z-10 bg-slate-900/40 backdrop-blur-xl border-t border-cyan-500/30 p-6">
+                        <div className="flex justify-center items-center space-x-8 mb-4">
+                            {/* Like Button */}
+                            <button
+                                className="text-pink-400 hover:text-pink-300 transition-all duration-200 hover:scale-110 p-3 rounded-full hover:bg-pink-500/10"
+                                onClick={() => onLikeToggle?.(currentSong, isCurrentTrackLiked)}
+                            >
+                                {isCurrentTrackLiked ? (
+                                    <MdFavorite size={28} />
+                                ) : (
+                                    <MdFavoriteBorder size={28} />
+                                )}
+                            </button>
+
+                            {/* Previous Button */}
+                            {isLikedPanelActive && (
+                                <button
+                                    className="text-cyan-400 hover:text-cyan-300 transition-all duration-200 hover:scale-110 p-3 rounded-full hover:bg-cyan-500/10"
+                                    onClick={onPrevLikedSong}
+                                    disabled={!hasSong}
+                                >
+                                    <MdSkipPrevious size={32} />
+                                </button>
+                            )}
+
+                            {/* Play/Pause Button */}
+                            <button
+                                className={`bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 hover:scale-105 rounded-full p-4 shadow-2xl shadow-cyan-500/30 ${
+                                    !hasSong ? 'opacity-50 cursor-not-allowed' : ''
+                                }`}
+                                onClick={handlePlayPause}
+                                disabled={!hasSong}
+                            >
+                                {isPlaying ? <MdPause size={36} /> : <MdPlayArrow size={36} />}
+                            </button>
+
+                            {/* Next Button */}
+                            {isLikedPanelActive && (
+                                <button
+                                    className="text-cyan-400 hover:text-cyan-300 transition-all duration-200 hover:scale-110 p-3 rounded-full hover:bg-cyan-500/10"
+                                    onClick={onNextLikedSong}
+                                    disabled={!hasSong}
+                                >
+                                    <MdSkipNext size={32} />
+                                </button>
+                            )}
+
+                            {/* Video Toggle */}
+                            <button
+                                className="text-red-400 hover:text-red-300 transition-all duration-200 hover:scale-110 p-3 rounded-full hover:bg-red-500/10"
+                                onClick={() => setShowVideo(!showVideo)}
+                            >
+                                <FaYoutube size={28} />
+                            </button>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+
+            {/* Mobile Controls - Removed old implementation */}
+            {false && (
+                <motion.div 
+                    className="md:hidden absolute -top-32 left-0 right-0 bg-gradient-to-r from-slate-950/95 via-slate-900/95 to-slate-950/95 backdrop-blur-2xl border-t border-cyan-500/30 p-4 rounded-t-2xl shadow-2xl z-50"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: 20, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                 >
-                    <div className="flex justify-center items-center space-x-6 mb-3">
+                    <div className="flex justify-center items-center space-x-8 mb-4">
                         {isLikedPanelActive && (
                             <button
-                                className="hover:text-cyan-400 transition-all duration-200 hover:scale-110 touch-manipulation p-2 rounded-xl hover:bg-cyan-500/10"
+                                className="hover:text-cyan-400 transition-all duration-200 hover:scale-110 touch-manipulation p-3 rounded-xl hover:bg-cyan-500/10"
                                 onClick={onPrevLikedSong}
                                 disabled={!hasSong}
                             >
-                                <MdSkipPrevious size={24} />
+                                <MdSkipPrevious size={28} />
                             </button>
                         )}
 
                         <button
-                            className={`bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 hover:scale-105 rounded-2xl p-3 shadow-lg shadow-cyan-500/25 touch-manipulation ${
+                            className={`bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 hover:scale-105 rounded-2xl p-4 shadow-lg shadow-cyan-500/25 touch-manipulation ${
                                 !hasSong ? 'opacity-50 cursor-not-allowed' : ''
                             }`}
                             onClick={handlePlayPause}
                             disabled={!hasSong}
                         >
-                            {isPlaying ? <MdPause size={24} /> : <MdPlayArrow size={24} />}
+                            {isPlaying ? <MdPause size={32} /> : <MdPlayArrow size={32} />}
                         </button>
 
                         {isLikedPanelActive && (
                             <button
-                                className="hover:text-cyan-400 transition-all duration-200 hover:scale-110 touch-manipulation p-2 rounded-xl hover:bg-cyan-500/10"
+                                className="hover:text-cyan-400 transition-all duration-200 hover:scale-110 touch-manipulation p-3 rounded-xl hover:bg-cyan-500/10"
                                 onClick={onNextLikedSong}
                                 disabled={!hasSong}
                             >
-                                <MdSkipNext size={24} />
+                                <MdSkipNext size={28} />
                             </button>
                         )}
                     </div>
 
-                    {/* Mobile Seek bar */}
-                    <div className="flex items-center space-x-3">
-                        <span className="text-xs text-slate-400 flex-shrink-0 font-mono">{formatTime(playedSeconds)}</span>
+                    {/* Enhanced Mobile Seek bar */}
+                    <div className="flex items-center space-x-4">
+                        <span className="text-sm text-slate-400 flex-shrink-0 font-mono">{formatTime(playedSeconds)}</span>
                         <input
                             type="range"
-                            className="flex-1 h-2 bg-slate-700 rounded-full cursor-pointer accent-cyan-500"
+                            className="flex-1 h-3 bg-slate-700 rounded-full cursor-pointer accent-cyan-500"
                             min="0"
                             max={duration}
                             step="1"
@@ -292,20 +426,22 @@ export default function MusicPlayer({
                             onChange={handleSeek}
                             disabled={!hasSong}
                         />
-                        <span className="text-xs text-slate-400 flex-shrink-0 font-mono">{formatTime(duration)}</span>
+                        <span className="text-sm text-slate-400 flex-shrink-0 font-mono">{formatTime(duration)}</span>
                     </div>
                 </motion.div>
             )}
 
-            {/* Mobile Expand/Collapse Button */}
-            <div className="md:hidden absolute -top-12 left-1/2 transform -translate-x-1/2 z-40">
+            {/* Mobile Expand/Collapse Button - Removed */}
+            {false && (
+            <div className="md:hidden absolute -top-16 left-1/2 transform -translate-x-1/2 z-40">
                 <button
                     className="bg-gradient-to-r from-cyan-500/80 to-blue-500/80 hover:from-cyan-600/90 hover:to-blue-600/90 transition-all duration-200 hover:scale-110 rounded-full p-2 shadow-lg shadow-cyan-500/25 backdrop-blur-sm border border-cyan-400/30"
-                    onClick={() => setShowMobileControls(!showMobileControls)}
+                    onClick={() => setShowFullPagePlayer(!showFullPagePlayer)}
                 >
-                    {showMobileControls ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
+                    {showFullPagePlayer ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
                 </button>
             </div>
+            )}
 
             {/*AUDIO-ONLY PLAYER (hidden visually) */}
             {hasSong && (
