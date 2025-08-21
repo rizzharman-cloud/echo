@@ -328,16 +328,16 @@ export default function App() {
                     shouldBlur ? "blur-sm" : ""
                 }`}
             >
-                <div className="flex items-center justify-between mb-4">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-600 bg-clip-text text-transparent text-center md:text-left">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent text-center md:text-left">
                         Echo AI Music
                     </h1>
                     
                     {/* User Profile - Top Right */}
                     {user && (
-                        <div className="flex items-center space-x-3 bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-xl p-2">
-                            <MdPerson className="w-8 h-8 text-blue-400" />
-                            <span className="text-slate-100 font-medium hidden sm:block">{user.displayName}</span>
+                        <div className="flex items-center space-x-2 sm:space-x-3 bg-gradient-to-r from-slate-900/70 to-slate-800/70 backdrop-blur-2xl border border-cyan-500/30 rounded-2xl p-2 shadow-lg shadow-cyan-500/10">
+                            <MdPerson className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-400" />
+                            <span className="text-slate-100 font-medium text-sm sm:text-base hidden sm:block truncate max-w-32">{user.displayName}</span>
                         </div>
                     )}
                 </div>
@@ -346,7 +346,7 @@ export default function App() {
                 <PermanentSearchBar setSong={handleSetCurrentSong} />
 
                 {/* Scrollable Section */}
-                <div className="flex-1 overflow-y-auto scrollbar-hidden mb-20 md:mb-20 bg-slate-900/20 rounded-xl border border-slate-700/30 backdrop-blur-sm">
+                <div className="flex-1 overflow-y-auto scrollbar-hidden mb-24 sm:mb-20 md:mb-20 bg-gradient-to-br from-slate-900/30 to-slate-800/30 rounded-2xl border border-slate-700/30 backdrop-blur-sm">
                     {isLikedPanelActive ? (
                         <LikedSongs
                             songs={likedSongs}
@@ -362,6 +362,15 @@ export default function App() {
                             onSelectSong={handleSetCurrentSong}
                             onCreatePlaylist={handleCreatePlaylist}
                             refreshPlaylists={refreshPlaylists}
+                            currentSong={currentSong}
+                            onPrevPlaylistSong={(playlistSongs) => {
+                                const currentIndex = playlistSongs.findIndex(s => s.videoId === currentSong?.videoId);
+                                if (currentIndex > 0) handleSetCurrentSong(playlistSongs[currentIndex - 1]);
+                            }}
+                            onNextPlaylistSong={(playlistSongs) => {
+                                const currentIndex = playlistSongs.findIndex(s => s.videoId === currentSong?.videoId);
+                                if (currentIndex >= 0 && currentIndex < playlistSongs.length - 1) handleSetCurrentSong(playlistSongs[currentIndex + 1]);
+                            }}
                         />
                     ) : (
                         <RecentlyPlayed
@@ -378,7 +387,7 @@ export default function App() {
             {/* Dialog Overlays */}
 
             {/* Desktop Music Player */}
-            <div className="hidden md:block fixed bottom-0 left-0 right-0 h-20 z-50">
+            <div className="hidden md:block fixed bottom-0 left-0 right-0 h-20 lg:h-24 z-50">
                 <MusicPlayer
                     song={currentSong}
                     likedSongs={likedSongs}
@@ -390,8 +399,8 @@ export default function App() {
             </div>
 
             {/* Mobile Music Player */}
-            <div className="md:hidden fixed bottom-16 left-0 right-0 z-50 flex flex-col">
-                <div className="h-20">
+            <div className="md:hidden fixed bottom-20 left-0 right-0 z-50 flex flex-col">
+                <div className="h-16 sm:h-20">
                     <MusicPlayer
                         song={currentSong}
                         likedSongs={likedSongs}

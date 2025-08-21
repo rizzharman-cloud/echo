@@ -112,62 +112,62 @@ export default function PermanentSearchBar({ setSong }) {
     }
 
     return (
-        <div className="relative w-full max-w-2xl mx-auto mb-6">
+        <div className="relative w-full max-w-4xl mx-auto mb-4 sm:mb-6 px-2 sm:px-0">
             {/* Search Bar */}
             <form
                 onSubmit={handleSubmit}
-                className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl py-4 px-6 flex items-center space-x-4 shadow-xl hover:bg-slate-900/70 transition-all duration-300"
+                className="bg-gradient-to-r from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-2xl border border-cyan-500/30 rounded-3xl py-3 sm:py-4 px-4 sm:px-6 flex items-center space-x-3 sm:space-x-4 shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 hover:border-cyan-400/50"
             >
-                <MdSearch className="text-blue-400 flex-shrink-0" size={24} />
+                <MdSearch className="text-cyan-400 flex-shrink-0" size={20} />
                 <input
                     type="text"
                     placeholder="Search for songs, artists, or albums..."
-                    className="flex-1 bg-transparent text-white placeholder-slate-400 focus:outline-none text-lg"
+                    className="flex-1 bg-transparent text-white placeholder-slate-400 focus:outline-none text-sm sm:text-lg"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                 />
                 <button
                     type="submit"
-                    className="text-blue-400 hover:text-blue-300 transition-all duration-200 hover:scale-110 flex-shrink-0"
+                    className="text-cyan-400 hover:text-cyan-300 transition-all duration-200 hover:scale-110 flex-shrink-0 p-1 rounded-full hover:bg-cyan-500/10"
                     aria-label="Search"
                 >
-                    <MdSearch size={24} />
+                    <MdSearch size={20} />
                 </button>
             </form>
 
             {/* Loading Indicator */}
             {isLoading && (
-                <div className="absolute top-full left-0 right-0 mt-2 text-center text-blue-400 bg-slate-900/95 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50 z-50">
+                <div className="absolute top-full left-2 right-2 sm:left-0 sm:right-0 mt-2 text-center text-cyan-400 bg-slate-900/95 backdrop-blur-xl rounded-2xl p-3 sm:p-4 border border-cyan-500/30 z-50 shadow-xl">
                     Loading...
                 </div>
             )}
 
             {/* Error Message */}
             {error && (
-                <div className="absolute top-full left-0 right-0 mt-2 text-center text-red-400 bg-slate-900/95 backdrop-blur-sm rounded-xl p-4 border border-red-500/20 z-50">
+                <div className="absolute top-full left-2 right-2 sm:left-0 sm:right-0 mt-2 text-center text-red-400 bg-slate-900/95 backdrop-blur-xl rounded-2xl p-3 sm:p-4 border border-red-500/30 z-50 shadow-xl">
                     {error}
                 </div>
             )}
 
             {/* Suggestions List */}
             {showSuggestions && suggestions.length > 0 && !isLoading && !error && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 max-h-80 overflow-y-auto scrollbar-hidden rounded-xl shadow-xl z-50">
+                <div className="absolute top-full left-2 right-2 sm:left-0 sm:right-0 mt-2 bg-slate-900/95 backdrop-blur-2xl border border-cyan-500/30 max-h-80 overflow-y-auto scrollbar-hidden rounded-2xl shadow-2xl z-50">
                     {suggestions.map((suggestion) => (
                         <div
                             key={suggestion.videoId}
                             onClick={() => handleSongSelect(suggestion)}
-                            className="flex items-center p-4 hover:bg-slate-800/80 cursor-pointer transition-all duration-200 hover:scale-[1.02] border-b border-slate-700/30 last:border-b-0"
+                            className="flex items-center p-3 sm:p-4 hover:bg-gradient-to-r hover:from-slate-800/80 hover:to-slate-700/80 cursor-pointer transition-all duration-200 hover:scale-[1.02] border-b border-slate-700/30 last:border-b-0 first:rounded-t-2xl last:rounded-b-2xl"
                         >
                             <img
                                 src={suggestion.imageUrl}
                                 alt={suggestion.title}
-                                className="w-14 h-14 rounded-xl mr-4 object-cover border border-slate-600/50 shadow-lg flex-shrink-0"
+                                className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl mr-3 sm:mr-4 object-cover border border-slate-600/50 shadow-lg flex-shrink-0"
                             />
                             <div className="flex-1 min-w-0">
-                                <div className="text-slate-100 font-semibold truncate text-lg">
+                                <div className="text-slate-100 font-semibold truncate text-sm sm:text-lg">
                                     {suggestion.title}
                                 </div>
-                                <div className="text-slate-400 text-sm truncate">
+                                <div className="text-slate-400 text-xs sm:text-sm truncate">
                                     {suggestion.artist}
                                 </div>
                             </div>
@@ -178,7 +178,7 @@ export default function PermanentSearchBar({ setSong }) {
 
             {/* No Results */}
             {showSuggestions && suggestions.length === 0 && !isLoading && query.trim() !== '' && !error && (
-                <div className="absolute top-full left-0 right-0 mt-2 text-center text-slate-400 bg-slate-900/95 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50 z-50">
+                <div className="absolute top-full left-2 right-2 sm:left-0 sm:right-0 mt-2 text-center text-slate-400 bg-slate-900/95 backdrop-blur-xl rounded-2xl p-3 sm:p-4 border border-slate-700/50 z-50 shadow-xl">
                     No results found.
                 </div>
             )}
