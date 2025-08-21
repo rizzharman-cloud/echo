@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { MdPlaylistPlay, MdDelete, MdEdit, MdAdd, MdArrowBack, MdPlayArrow } from "react-icons/md";
-import { deletePlaylist, updatePlaylist } from "../firebase";
+import { deletePlaylist, updatePlaylist, removeSongFromPlaylist } from "../firebase";
 import { toast } from "react-hot-toast";
 
 export default function PlaylistsPanel({ playlists, setPlaylists, onSelectSong, onCreatePlaylist, refreshPlaylists }) {
@@ -98,6 +98,49 @@ export default function PlaylistsPanel({ playlists, setPlaylists, onSelectSong, 
         onSelectSong && onSelectSong(song);
     };
 
+    const handleDeleteSongFromPlaylist = async (song, playlistId) => {
+        if (!window.confirm(`Remove "${song.title}" from this playlist?`)) {
+            return;
+        }
+
+        try {
+            await removeSongFromPlaylist(playlistId, song);
+            
+            // Update local state
+            setPlaylists(prev => 
+                prev.map(playlist => 
+                    playlist.id === playlistId 
+                        ? { ...playlist, songs: playlist.songs.filter(s => s.videoId !== song.videoId) }
+                        : playlist
+                )
+            );
+
+            // Update the viewing playlist if it's currently being viewed
+            if (viewingPlaylist && viewingPlaylist.id === playlistId) {
+                setViewingPlaylist(prev => ({
+                    ...prev,
+                    songs: prev.songs.filter(s => s.videoId !== song.videoId)
+                }));
+            }
+
+            // Refresh playlists to ensure consistency
+            if (refreshPlaylists) {
+                setTimeout(async () => {
+                    await refreshPlaylists();
+                }, 1000);
+            }
+
+            toast.success("Song removed from playlist!", {
+                position: "top-right",
+            });
+        } catch (error) {
+            console.error("Error removing song from playlist:", error);
+            toast.error("Failed to remove song from playlist.", {
+                position: "top-right",
+            });
+        }
+    };
+
     // If viewing a specific playlist, show its songs
     if (viewingPlaylist) {
         return (
@@ -131,22 +174,41 @@ export default function PlaylistsPanel({ playlists, setPlaylists, onSelectSong, 
                         {viewingPlaylist.songs.map((song, index) => (
                             <motion.div
                                 key={`${song.videoId}-${index}`}
-                                className="relative bg-gradient-to-b h-44 sm:h-48 md:h-52 from-slate-800/60 to-slate-900/80 backdrop-blur-sm border border-slate-700/30 rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-blue-500/20 cursor-pointer"
-                                onClick={() => handleSongClick(song, index)}
+                                className="relative bg-gradient-to-b h-44 sm:h-48 md:h-52 from-slate-800/60 to-slate-900/80 backdrop-blur-sm border border-slate-700/30 rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-blue-500/20"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3, delay: index * 0.1 }}
                             >
-                                <img
-                                    src={song.imageUrl || 'https://via.placeholder.com/150'}
-                                    alt={song.title}
-                                    className="w-full h-28 sm:h-32 md:h-36 object-cover"
-                                />
-                                <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-slate-900/80 backdrop-blur-sm">
-                                    <p className="text-xs sm:text-sm font-semibold truncate text-slate-100">{song.title}</p>
-                                    <p className="text-xs text-slate-400 truncate">{song.artist}</p>
+                                <div 
+                                    className="cursor-pointer h-full"
+                                    onClick={() => handleSongClick(song, index)}
+                                >
+                                    <img
+                                        src={song.imageUrl || 'https://via.placeholder.com/150'}
+                                        alt={song.title}
+                                        className="w-full h-28 sm:h-32 md:h-36 object-cover"
+                                    />
+                                    <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-slate-900/80 backdrop-blur-sm">
+                                        <p className="text-xs sm:text-sm font-semibold truncate text-slate-100">{song.title}</p>
+                                        <p className="text-xs text-slate-400 truncate">{song.artist}</p>
+                                    </div>
                                 </div>
-                                <div className="absolute top-2 right-2">
+                                
+                                {/* Action buttons */}
+                                <div className="absolute top-2 right-2 flex space-x-1">
+                                    {/* Delete Song Button */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteSongFromPlaylist(song, viewingPlaylist.id);
+                                        }}
+                                        className="bg-red-500/80 hover:bg-red-600/90 backdrop-blur-sm rounded-full p-1.5 border border-red-400/50 transition-all duration-200 hover:scale-110"
+                                        aria-label="Remove song from playlist"
+                                    >
+                                        <MdDelete size={14} className="text-white" />
+                                    </button>
+                                    
+                                    {/* Play Button */}
                                     <div className="bg-slate-900/60 backdrop-blur-sm rounded-full p-1.5 border border-slate-600/50">
                                         <MdPlayArrow size={16} className="text-blue-400" />
                                     </div>
