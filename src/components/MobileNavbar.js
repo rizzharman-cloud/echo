@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdHome, MdFavorite, MdLogin, MdPlaylistPlay } from 'react-icons/md';
+import { MdHome, MdFavorite, MdLogin, MdPlaylistPlay, MdShare, MdDownload } from 'react-icons/md';
 import { CiLogout } from 'react-icons/ci';
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
@@ -9,6 +9,8 @@ export default function MobileNavbar({ activePanel,
                                          user,          
                                          onSignIn,      
                                          onSignOut,     
+                                         onShareClick,
+                                         onReceiveClick,
                                      }) {
     // Helper function to toggle the panel
     const togglePanel = (panel) =>
@@ -91,6 +93,28 @@ export default function MobileNavbar({ activePanel,
                     </motion.button>
                 )}
 
+                {/* Share Button */}
+                <motion.button
+                    className="relative p-3 rounded-2xl text-slate-300 hover:text-green-400 hover:bg-slate-800/50 transition-all duration-300"
+                    onClick={onShareClick}
+                    aria-label="Share Songs"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    <MdShare size={24} />
+                </motion.button>
+
+                {/* Receive Button */}
+                <motion.button
+                    className="relative p-3 rounded-2xl text-slate-300 hover:text-yellow-400 hover:bg-slate-800/50 transition-all duration-300"
+                    onClick={onReceiveClick}
+                    aria-label="Receive Shared Songs"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    <MdDownload size={24} />
+                </motion.button>
+
                 {/* Sign-In / Sign-Out Button */}
                 <motion.button
                     className="relative p-3 rounded-2xl text-slate-300 hover:text-orange-400 hover:bg-slate-800/50 transition-all duration-300"
@@ -112,4 +136,6 @@ MobileNavbar.propTypes = {
     user: PropTypes.object,               
     onSignIn: PropTypes.func.isRequired,  
     onSignOut: PropTypes.func.isRequired, 
+    onShareClick: PropTypes.func,
+    onReceiveClick: PropTypes.func,
 };

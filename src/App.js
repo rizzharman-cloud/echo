@@ -440,6 +440,22 @@ export default function App() {
                     refreshPlaylists={refreshPlaylists}
                 />
             )}
+
+            {/* Share Dialog */}
+            {showShareDialog && (
+                <ShareDialog
+                    onClose={() => setShowShareDialog(false)}
+                    likedSongs={likedSongs}
+                />
+            )}
+
+            {/* Receive Dialog */}
+            {showReceiveDialog && (
+                <ReceiveDialog
+                    onClose={() => setShowReceiveDialog(false)}
+                    setLikedSongs={setLikedSongs}
+                />
+            )}
         </div>
     );
 }
