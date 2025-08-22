@@ -330,7 +330,7 @@ export default function App() {
             >
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
                     <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent text-center md:text-left">
-                        Echo AI Music
+                        Echo Music
                     </h1>
                     
                     {/* User Profile - Top Right */}
@@ -438,22 +438,6 @@ export default function App() {
                     onPlaylistsUpdate={setPlaylists}
                     setPlaylists={setPlaylists}
                     refreshPlaylists={refreshPlaylists}
-                />
-            )}
-
-            {/* Share Dialog */}
-            {showShareDialog && (
-                <ShareDialog
-                    onClose={() => setShowShareDialog(false)}
-                    likedSongs={likedSongs}
-                />
-            )}
-
-            {/* Receive Dialog */}
-            {showReceiveDialog && (
-                <ReceiveDialog
-                    onClose={() => setShowReceiveDialog(false)}
-                    setLikedSongs={setLikedSongs}
                 />
             )}
         </div>
